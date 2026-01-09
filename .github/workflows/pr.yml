@@ -1,0 +1,25 @@
+name: Pull Request
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nicknovitski/nix-develop@1
+
+      - name: Build image
+        run: docker build -t morioh-backend .
+
+      - name: Run unit tests
+        run: cargo test
+
+      - name: Run app
+        run: docker run --rm morioh-backend
+
+      - name: Run test client
+        run: pytest
